@@ -616,13 +616,9 @@ dounderline(const char *begin, const char *end, int newblock) {
 void *
 ereallocz(void *p, size_t size) {
 	void *res;
-	if (p)
-		res = realloc(p, size);
-	else
-		res = calloc(1, size);
-
+	res = realloc(p, size);
 	if (!res)
-		eprint("fatal: could not malloc() %u bytes\n", size);
+		eprint("realloc: %zu bytes\n", size);
 	return res;
 }
 
