@@ -54,6 +54,7 @@ static Tag lineprefix[] = {
 	{ "## ",        1,      "<h2>",         "</h2>" },
 	{ "# ",         1,      "<h1>",         "</h1>" },
 	{ "- - -\n",    1,      "<hr />",       ""},
+	{ "---\n",	1,	"<hr />",	""},
 };
 
 static Tag underline[] = {
