@@ -324,7 +324,7 @@ dolink(const char *begin, const char *end, int newblock) {
 		/* strip trailing whitespace */
 		for (linkend = p; linkend > link && isspace(*(linkend - 1)); linkend--);
 		for (titleend = q - 1; titleend > link && isspace(*(titleend)); titleend--);
-		if (*titleend != sep) {
+		if (titleend < title || *titleend != sep) {
 			return 0;
 		}
 	}
