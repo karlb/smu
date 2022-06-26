@@ -237,7 +237,7 @@ dolineprefix(const char *begin, const char *end, int newblock) {
 		return 0;
 	for (i = 0; i < LENGTH(lineprefix); i++) {
 		l = strlen(lineprefix[i].search);
-		if (end - p < l)
+		if (end - p + 1 < l)
 			continue;
 		if (strncmp(lineprefix[i].search, p, l))
 			continue;
