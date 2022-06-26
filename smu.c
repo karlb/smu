@@ -681,7 +681,7 @@ main(int argc, char *argv[]) {
 	unsigned long len, bsize;
 	FILE *source = stdin;
 
-	regcomp(&p_end_regex, "(\n\n|(^|\n)```)", REG_EXTENDED);
+	regcomp(&p_end_regex, "(\n\n|(^|\n)(```|---\n|- - -\n))", REG_EXTENDED);
 
 	for (i = 1; i < argc; i++) {
 		if (!strcmp("-v", argv[i]))
