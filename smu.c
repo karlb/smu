@@ -226,12 +226,14 @@ dolineprefix(const char *begin, const char *end, int newblock) {
 	unsigned int i, j, l;
 	char *buffer;
 	const char *p;
+	int consumed_input = 0;
 
 	if (newblock)
 		p = begin;
-	else if (*begin == '\n')
+	else if (*begin == '\n') {
 		p = begin + 1;
-	else
+		consumed_input += 1;
+	} else
 		return 0;
 	for (i = 0; i < LENGTH(lineprefix); i++) {
 		l = strlen(lineprefix[i].search);
@@ -244,7 +246,7 @@ dolineprefix(const char *begin, const char *end, int newblock) {
 		fputs(lineprefix[i].before, stdout);
 		if (lineprefix[i].search[l-1] == '\n') {
 			fputc('\n', stdout);
-			return l - 1;
+			return l - 1 + consumed_input;
 		}
 		if (!(buffer = malloc(BUFSIZ)))
 			eprint("Malloc failed.");
