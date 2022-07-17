@@ -76,7 +76,7 @@ Titles
 ------
 
 Creating titles in smu is very easy. There are two different syntax styles. The
-first is underlining:
+first is underlining with at least three characters:
 
 	Heading
 	=======

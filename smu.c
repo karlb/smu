@@ -603,7 +603,7 @@ dounderline(const char *begin, const char *end, int newblock) {
 		return 0;
 	for (i = 0; i < LENGTH(underline); i++) {
 		for (j = 0; p + j < end && p[j] != '\n' && p[j] == underline[i].search[0]; j++);
-		if (j >= l) {
+		if (j >= 3) {
 			fputs(underline[i].before, stdout);
 			if (underline[i].process)
 				process(begin, begin + l, 0);
