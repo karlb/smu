@@ -37,7 +37,8 @@ original smu are:</p>
 <h2>Inline patterns</h2>
 <p>There are several patterns you can use to highlight your text:</p>
 <ul>
-<li><p>Emphasis
+<li><p>Emphasis</p>
+
 <ul>
 <li>Surround your text with <code>*</code> or <code>_</code> to get <em>emphasised</em> text:
 <pre><code>This *is* cool.
@@ -59,12 +60,11 @@ This ___is___ cool, too.
 </code></pre>
 <p>This is a wontfix bug because it would make the source too complex.
 Use this instead:
+</p>
 <pre><code>***Hello*** *you*
 </code></pre>
-</p>
 </li>
 </ul>
-</p>
 </li>
 <li><p>inline Code</p>
 <p>You can produce inline code with surrounding <code>`</code> or <code>``</code></p>
@@ -155,35 +155,35 @@ other quotes into a quote:</p>
 &gt; This is a quote with a [link](http://s01.de/~gottox)
 </code></pre>
 <p>Result:
+</p>
 <pre><code>&lt;blockquote&gt;&lt;p&gt;
 Hello
 This is a quote with a &lt;a href=&quot;http://s01.de/~gottox&quot;&gt;link&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 </code></pre>
-</p>
 <p>You can define a code block with a leading Tab or with <strong>4</strong> leading spaces</p>
 <pre><code>	this.is(code)
 
     this.is(code, too)
 </code></pre>
 <p>Result:
+</p>
 <pre><code>&lt;pre&gt;&lt;code&gt;this.is(code)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;this.is(code, too)
 &lt;/code&gt;&lt;/pre&gt;
 </code></pre>
-</p>
 <p>Please note that you can't use HTML or smu syntax in a code block.</p>
 <p>Another way to write code blocks is to use code fences:</p>
 <pre><code>```json
 {&quot;some&quot;: &quot;code&quot;}
 ```
 </code></pre>
-<p>This has two advantages:
+<p>This has two advantages:</p>
+
 <ul>
 <li>The optional language identifier will be turned into a <code>language-</code> class name</li>
 <li>You can keep the original indentation which helps when doing copy &amp; paste</li>
 </ul>
-</p>
 <h2>Other interesting stuff</h2>
 <ul>
 <li><p>to insert a horizontal rule simple add <code>- - -</code> into an empty line:</p>
@@ -192,11 +192,11 @@ This is a quote with a &lt;a href=&quot;http://s01.de/~gottox&quot;&gt;link&lt;/
 Hello2
 </code></pre>
 <p>Result:
+</p>
 <pre><code>&lt;p&gt;
 Hello
 &lt;hr /&gt;
 </code></pre>
-</p>
 <pre><code>Hello2&lt;/p&gt;
 </code></pre>
 </li>
