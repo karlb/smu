@@ -40,6 +40,7 @@ static Parser parsers[] = { dounderline, docomment, docodefence, dolineprefix,
 	                    dolist, doparagraph, dosurround, dolink,
 	                    doshortlink, dohtml, doreplace };
 static int nohtml = 0;
+static int in_paragraph = 0;
 
 regex_t p_end_regex;  /* End of paragraph */
 
@@ -243,6 +244,14 @@ dolineprefix(const char *begin, const char *end, int newblock) {
 			continue;
 		if (*begin == '\n')
 			fputc('\n', stdout);
+
+		/* All line prefixes add a block element. These are not allowed
+		 * inside paragraphs, so we must end the paragraph first. */
+		if (in_paragraph) {
+			fputs("</p>\n", stdout);
+			in_paragraph = 0;
+		}
+
 		fputs(lineprefix[i].before, stdout);
 		if (lineprefix[i].search[l-1] == '\n') {
 			fputc('\n', stdout);
@@ -484,8 +493,15 @@ doparagraph(const char *begin, const char *end, int newblock) {
 	}
 
 	fputs("<p>", stdout);
+	in_paragraph = 1;
 	process(begin, p, 0);
-	fputs("</p>\n", stdout);
+
+	/* The paragraph can be interrupted within `process`. */
+	if (in_paragraph) {
+		fputs("</p>\n", stdout);
+		in_paragraph = 0;
+	}
+
 	return -(p - begin);
 }
 
