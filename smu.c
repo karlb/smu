@@ -132,6 +132,13 @@ eprint(const char *format, ...) {
 	exit(EXIT_FAILURE);
 }
 
+void end_paragraph() {
+	if (in_paragraph) {
+		fputs("</p>\n", stdout);
+		in_paragraph = 0;
+	}
+}
+
 int
 docomment(const char *begin, const char *end, int newblock) {
 	char *p;
@@ -247,10 +254,7 @@ dolineprefix(const char *begin, const char *end, int newblock) {
 
 		/* All line prefixes add a block element. These are not allowed
 		 * inside paragraphs, so we must end the paragraph first. */
-		if (in_paragraph) {
-			fputs("</p>\n", stdout);
-			in_paragraph = 0;
-		}
+		end_paragraph();
 
 		fputs(lineprefix[i].before, stdout);
 		if (lineprefix[i].search[l-1] == '\n') {
@@ -408,10 +412,7 @@ dolist(const char *begin, const char *end, int newblock) {
 	if (p >= end || !(*p == ' ' || *p == '\t'))
 		return 0;
 
-	if (in_paragraph) {
-		fputs("</p>\n", stdout);
-		in_paragraph = 0;
-	}
+	end_paragraph();
 
 	for (p++; p != end && (*p == ' ' || *p == '\t'); p++);
 	indent = p - q;
@@ -501,12 +502,7 @@ doparagraph(const char *begin, const char *end, int newblock) {
 	fputs("<p>", stdout);
 	in_paragraph = 1;
 	process(begin, p, 0);
-
-	/* The paragraph can be interrupted within `process`. */
-	if (in_paragraph) {
-		fputs("</p>\n", stdout);
-		in_paragraph = 0;
-	}
+	end_paragraph();
 
 	return -(p - begin);
 }
