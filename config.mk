@@ -10,7 +10,7 @@ INCS = -I. -I/usr/include
 LIBS = -L/usr/lib
 
 # flags
-CFLAGS = -g -O0 -Wall -Werror -ansi ${INCS} -DVERSION=\"${VERSION}\"
+CFLAGS = -g -O0 -Wall -Werror -ansi ${INCS} -DVERSION=\"${VERSION}\" -Wstrict-prototypes
 #CFLAGS = -fprofile-arcs -ftest-coverage -pg -g -O0 -Wall -Werror -ansi ${INCS} -DVERSION=\"${VERSION}\"
 #CFLAGS = -Os -Wall -Werror -ansi ${INCS} -DVERSION=\"${VERSION}\"
 #LDFLAGS = -fprofile-arcs -ftest-coverage -pg ${LIBS}

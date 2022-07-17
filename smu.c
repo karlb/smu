@@ -132,7 +132,7 @@ eprint(const char *format, ...) {
 	exit(EXIT_FAILURE);
 }
 
-void end_paragraph() {
+void end_paragraph(void) {
 	if (in_paragraph) {
 		fputs("</p>\n", stdout);
 		in_paragraph = 0;
