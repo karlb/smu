@@ -407,6 +407,12 @@ dolist(const char *begin, const char *end, int newblock) {
 	p++;
 	if (p >= end || !(*p == ' ' || *p == '\t'))
 		return 0;
+
+	if (in_paragraph) {
+		fputs("</p>\n", stdout);
+		in_paragraph = 0;
+	}
+
 	for (p++; p != end && (*p == ' ' || *p == '\t'); p++);
 	indent = p - q;
 	buffer = ereallocz(buffer, BUFSIZ);

@@ -5,3 +5,6 @@ Ordered lists will use the first number as start number and continue counting fr
 
 2. Two
 4. Three
+
+HTML does not allow lists in paragraphs, so the following should end the paragraph before starting the list:
+- bar
