@@ -1,5 +1,7 @@
 /* smu - simple markup
  * Copyright (C) <2007, 2008> Enno Boland <g s01 de>
+ *               2019-2022 Karl Bartel <karl@karl.berlin>
+ *               2022 bzt
  *
  * See LICENSE for further informations
  */
@@ -26,6 +28,7 @@ static int dohtml(const char *begin, const char *end, int newblock);      /* Par
 static int dolineprefix(const char *begin, const char *end, int newblock);/* Parser for line prefix tags */
 static int dolink(const char *begin, const char *end, int newblock);      /* Parser for links and images */
 static int dolist(const char *begin, const char *end, int newblock);      /* Parser for lists */
+static int dotable(const char *begin, const char *end, int newblock);     /* Parser for tables */
 static int doparagraph(const char *begin, const char *end, int newblock); /* Parser for paragraphs */
 static int doreplace(const char *begin, const char *end, int newblock);   /* Parser for simple replaces */
 static int doshortlink(const char *begin, const char *end, int newblock); /* Parser for links and images */
@@ -37,12 +40,16 @@ static void process(const char *begin, const char *end, int isblock);     /* Pro
 
 /* list of parsers */
 static Parser parsers[] = { dounderline, docomment, docodefence, dolineprefix,
-	                    dolist, doparagraph, dosurround, dolink,
+	                    dolist, dotable, doparagraph, dosurround, dolink,
 	                    doshortlink, dohtml, doreplace };
 static int nohtml = 0;
 static int in_paragraph = 0;
 
 regex_t p_end_regex;  /* End of paragraph */
+
+/* table state */
+static char intable = 0, inrow, incell;
+static long int calign;
 
 static Tag lineprefix[] = {
 	{ "    ",       0,      "<pre><code>", "\n</code></pre>" },
@@ -484,6 +491,55 @@ dolist(const char *begin, const char *end, int newblock) {
 	p--;
 	while (*(--p) == '\n');
 	return -(p - begin + 1);
+}
+
+int
+dotable(const char *begin, const char *end, int newblock) {
+    const char *p;
+    int i, l = (int)sizeof(calign) * 4;
+
+    if(*begin != '|')
+        return 0;
+    if(inrow && (begin + 1 >= end || begin[1] == '\n')) {       /* close cell and row and if ends, table too */
+        fprintf(stdout, "</t%c></tr>", inrow == -1 ? 'h' : 'd');
+        inrow = 0;
+        if(begin + 2 >= end || begin[2] == '\n') {
+            intable = 0;
+            fputs("\n</table>", stdout);
+            return 2;
+        }
+        return 1;
+    }
+    for(p = begin; p < end && (*p == '|' || *p == ' ' ||        /* only load cell aligns from 2nd line */
+		*p == '\t' || *p == ':' || *p == '-'); p++);
+    if(*p == '\r' || *p == '\n') {
+        for(i = -1, p = begin; p < end && *p != '\n'; p++)
+            if(*p == '|') {
+                i++;
+                do { p++; } while(p < end && (*p == ' ' || *p == '\t'));
+                if(i < l && *p == ':')
+                    calign |= 1 << (i * 2);
+            } else
+            if(i < l && *p == ':')
+                calign |= 1 << (i * 2 + 1);
+        return p - begin + 1;
+    }
+    if(!intable) {                                              /* open table */
+        intable = 1; inrow = -1; incell = 0; calign = 0;
+        fputs("<table>\n<tr>", stdout);
+    }
+    if(!inrow) {                                                /* open row */
+        inrow = 1; incell = 0;
+        fputs("<tr>", stdout);
+    }
+    if(incell)                                                  /* close cell */
+        fprintf(stdout, "</t%c>", inrow == -1 ? 'h' : 'd');
+    l = incell < l ? (calign >> (incell * 2)) & 3 : 0;          /* open cell */
+    fprintf(stdout, "<t%c%s>", inrow == -1 ? 'h' : 'd',
+        l == 2 ? " class=\"right\"" : (l == 3 ? " class=\"center\"" : ""));
+    incell++;
+    for(p = begin + 1; p < end && *p == ' '; p++);
+    return p - begin;
 }
 
 int
