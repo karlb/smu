@@ -47,10 +47,6 @@ static int in_paragraph = 0;
 
 regex_t p_end_regex;  /* End of paragraph */
 
-/* table state */
-static char intable = 0, inrow, incell;
-static long int calign;
-
 static Tag lineprefix[] = {
 	{ "    ",       0,      "<pre><code>", "\n</code></pre>" },
 	{ "\t",         0,      "<pre><code>", "\n</code></pre>" },
@@ -495,6 +491,10 @@ dolist(const char *begin, const char *end, int newblock) {
 
 int
 dotable(const char *begin, const char *end, int newblock) {
+    /* table state */
+    static char intable, inrow, incell;
+    static unsigned long int calign;
+
     const char *p;
     int i, l = (int)sizeof(calign) * 4;
 
@@ -518,10 +518,10 @@ dotable(const char *begin, const char *end, int newblock) {
                 i++;
                 do { p++; } while(p < end && (*p == ' ' || *p == '\t'));
                 if(i < l && *p == ':')
-                    calign |= 1 << (i * 2);
+                    calign |= 1ul << (i * 2);
             } else
             if(i < l && *p == ':')
-                calign |= 1 << (i * 2 + 1);
+                calign |= 1ul << (i * 2 + 1);
         return p - begin + 1;
     }
     if(!intable) {                                              /* open table */
