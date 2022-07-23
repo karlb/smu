@@ -1,0 +1,10 @@
+| 1st field | 2nd field |
+| :--       |       --: |
+| 1st entry | 2nd entry |
+
+And here is another table
+
+| Heading 1 | Some other heading |
+| --- | ------ |
+| I am a table cell. | Me too! |
+
