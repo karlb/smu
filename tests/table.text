@@ -1,6 +1,6 @@
-| 1st field | 2nd field |
-| :--       |       --: |
-| 1st entry | 2nd entry |
+| 1st field | 2nd field | 3rd field |
+| :--       |   :--:    |       --: |
+| 1st entry | 2nd entry | 3rd entry |
 
 And here is another table
 
