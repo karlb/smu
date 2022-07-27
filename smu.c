@@ -494,6 +494,12 @@ dotable(const char *begin, const char *end, int newblock) {
 	/* table state */
 	static signed char intable, inrow, incell;
 	static unsigned long int calign;
+	static const char align_table[4][16] = {
+		"",
+		" class=\"left\"",
+		" class=\"right\"",
+		" class=\"center\"",
+	};
 
 	const char *p;
 	int i, l = (int)sizeof(calign) * 4;
@@ -513,15 +519,18 @@ dotable(const char *begin, const char *end, int newblock) {
 	for(p = begin; p < end &&
 	    (*p == '|' || *p == ' ' || *p == '\t' || *p == ':' || *p == '-'); p++);
 	if(*p == '\r' || *p == '\n') {
-		for(i = -1; p < end && *p != '\n'; p++)
+		for(i = -1, p = begin; p < end && *p != '\n'; p++) {
 			if(*p == '|') {
 				i++;
 				do { p++; } while(p < end && (*p == ' ' || *p == '\t'));
 				if(i < l && *p == ':')
 					calign |= 1ul << (i * 2);
+				if (*p == '\n')
+					break;
 			} else if(i < l && *p == ':') {
 				calign |= 1ul << (i * 2 + 1);
 			}
+		}
 		return p - begin + 1;
 	}
 	if(!intable) {                                              /* open table */
@@ -535,8 +544,7 @@ dotable(const char *begin, const char *end, int newblock) {
 	if(incell)                                                  /* close cell */
 		fprintf(stdout, "</t%c>", inrow == -1 ? 'h' : 'd');
 	l = incell < l ? (calign >> (incell * 2)) & 3 : 0;          /* open cell */
-	fprintf(stdout, "<t%c%s>", inrow == -1 ? 'h' : 'd',
-		l == 2 ? " class=\"right\"" : (l == 3 ? " class=\"center\"" : ""));
+	fprintf(stdout, "<t%c%s>", inrow == -1 ? 'h' : 'd', align_table[l]);
 	incell++;
 	for(p = begin + 1; p < end && *p == ' '; p++);
 	return p - begin;
