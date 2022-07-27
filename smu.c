@@ -513,7 +513,7 @@ dotable(const char *begin, const char *end, int newblock) {
     for(p = begin; p < end && (*p == '|' || *p == ' ' ||        /* only load cell aligns from 2nd line */
 		*p == '\t' || *p == ':' || *p == '-'); p++);
     if(*p == '\r' || *p == '\n') {
-        for(i = -1, p = begin; p < end && *p != '\n'; p++)
+        for(i = -1; p < end && *p != '\n'; p++)
             if(*p == '|') {
                 i++;
                 do { p++; } while(p < end && (*p == ' ' || *p == '\t'));
