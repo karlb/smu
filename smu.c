@@ -505,8 +505,7 @@ dotable(const char *begin, const char *end, int newblock) {
         inrow = 0;
         if(begin + 2 >= end || begin[2] == '\n') {
             intable = 0;
-            fputs("\n</table>", stdout);
-            return 2;
+            fputs("\n</table>\n", stdout);
         }
         return 1;
     }
