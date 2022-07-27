@@ -491,54 +491,55 @@ dolist(const char *begin, const char *end, int newblock) {
 
 int
 dotable(const char *begin, const char *end, int newblock) {
-    /* table state */
-    static char intable, inrow, incell;
-    static unsigned long int calign;
+	/* table state */
+	static char intable, inrow, incell;
+	static unsigned long int calign;
 
-    const char *p;
-    int i, l = (int)sizeof(calign) * 4;
+	const char *p;
+	int i, l = (int)sizeof(calign) * 4;
 
-    if(*begin != '|')
-        return 0;
-    if(inrow && (begin + 1 >= end || begin[1] == '\n')) {       /* close cell and row and if ends, table too */
-        fprintf(stdout, "</t%c></tr>", inrow == -1 ? 'h' : 'd');
-        inrow = 0;
-        if(end - begin <= 2 || begin[2] == '\n') {
-            intable = 0;
-            fputs("\n</table>\n", stdout);
-        }
-        return 1;
-    }
-    for(p = begin; p < end && (*p == '|' || *p == ' ' ||        /* only load cell aligns from 2nd line */
-		*p == '\t' || *p == ':' || *p == '-'); p++);
-    if(*p == '\r' || *p == '\n') {
-        for(i = -1; p < end && *p != '\n'; p++)
-            if(*p == '|') {
-                i++;
-                do { p++; } while(p < end && (*p == ' ' || *p == '\t'));
-                if(i < l && *p == ':')
-                    calign |= 1ul << (i * 2);
-            } else
-            if(i < l && *p == ':')
-                calign |= 1ul << (i * 2 + 1);
-        return p - begin + 1;
-    }
-    if(!intable) {                                              /* open table */
-        intable = 1; inrow = -1; incell = 0; calign = 0;
-        fputs("<table>\n<tr>", stdout);
-    }
-    if(!inrow) {                                                /* open row */
-        inrow = 1; incell = 0;
-        fputs("<tr>", stdout);
-    }
-    if(incell)                                                  /* close cell */
-        fprintf(stdout, "</t%c>", inrow == -1 ? 'h' : 'd');
-    l = incell < l ? (calign >> (incell * 2)) & 3 : 0;          /* open cell */
-    fprintf(stdout, "<t%c%s>", inrow == -1 ? 'h' : 'd',
-        l == 2 ? " class=\"right\"" : (l == 3 ? " class=\"center\"" : ""));
-    incell++;
-    for(p = begin + 1; p < end && *p == ' '; p++);
-    return p - begin;
+	if(*begin != '|')
+		return 0;
+	if(inrow && (begin + 1 >= end || begin[1] == '\n')) {       /* close cell and row and if ends, table too */
+		fprintf(stdout, "</t%c></tr>", inrow == -1 ? 'h' : 'd');
+		inrow = 0;
+		if(end - begin <= 2 || begin[2] == '\n') {
+			intable = 0;
+			fputs("\n</table>\n", stdout);
+		}
+		return 1;
+	}
+	/* only load cell aligns from 2nd line */
+	for(p = begin; p < end &&
+	    (*p == '|' || *p == ' ' || *p == '\t' || *p == ':' || *p == '-'); p++);
+	if(*p == '\r' || *p == '\n') {
+		for(i = -1; p < end && *p != '\n'; p++)
+			if(*p == '|') {
+				i++;
+				do { p++; } while(p < end && (*p == ' ' || *p == '\t'));
+				if(i < l && *p == ':')
+					calign |= 1ul << (i * 2);
+			} else if(i < l && *p == ':') {
+				calign |= 1ul << (i * 2 + 1);
+			}
+		return p - begin + 1;
+	}
+	if(!intable) {                                              /* open table */
+		intable = 1; inrow = -1; incell = 0; calign = 0;
+		fputs("<table>\n<tr>", stdout);
+	}
+	if(!inrow) {                                                /* open row */
+		inrow = 1; incell = 0;
+		fputs("<tr>", stdout);
+	}
+	if(incell)                                                  /* close cell */
+		fprintf(stdout, "</t%c>", inrow == -1 ? 'h' : 'd');
+	l = incell < l ? (calign >> (incell * 2)) & 3 : 0;          /* open cell */
+	fprintf(stdout, "<t%c%s>", inrow == -1 ? 'h' : 'd',
+		l == 2 ? " class=\"right\"" : (l == 3 ? " class=\"center\"" : ""));
+	incell++;
+	for(p = begin + 1; p < end && *p == ' '; p++);
+	return p - begin;
 }
 
 int
