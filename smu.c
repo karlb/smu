@@ -492,7 +492,7 @@ dolist(const char *begin, const char *end, int newblock) {
 int
 dotable(const char *begin, const char *end, int newblock) {
 	/* table state */
-	static char intable, inrow, incell;
+	static signed char intable, inrow, incell;
 	static unsigned long int calign;
 
 	const char *p;
