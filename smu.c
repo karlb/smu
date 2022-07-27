@@ -503,7 +503,7 @@ dotable(const char *begin, const char *end, int newblock) {
     if(inrow && (begin + 1 >= end || begin[1] == '\n')) {       /* close cell and row and if ends, table too */
         fprintf(stdout, "</t%c></tr>", inrow == -1 ? 'h' : 'd');
         inrow = 0;
-        if(begin + 2 >= end || begin[2] == '\n') {
+        if(end - begin <= 2 || begin[2] == '\n') {
             intable = 0;
             fputs("\n</table>\n", stdout);
         }
