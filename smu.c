@@ -6,7 +6,6 @@
  * See LICENSE for further informations
  */
 #include <ctype.h>
-#include <regex.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,8 +43,6 @@ static Parser parsers[] = { dounderline, docomment, docodefence, dolineprefix,
 	                    doshortlink, dohtml, doreplace };
 static int nohtml = 0;
 static int in_paragraph = 0;
-
-regex_t p_end_regex;  /* End of paragraph */
 
 static Tag lineprefix[] = {
 	{ "    ",       0,      "<pre><code>", "\n</code></pre>" },
@@ -557,22 +554,30 @@ dotable(const char *begin, const char *end, int newblock) {
 
 int
 doparagraph(const char *begin, const char *end, int newblock) {
-	const char *p;
-	regmatch_t match;
+	const char *p = NULL, *q = begin;
 
 	if (!newblock)
 		return 0;
-	if (regexec(&p_end_regex, begin + 1, 1, &match, 0)) {
-		p = end;
-	} else {
-		p = begin + 1 + match.rm_so;
+	while (!p) {
+		q = memchr(q, '\n', end - q);
+		if (!q || q == end || q + 1 == end) {
+			p = end;
+		} else if (q[1] == '\n') {
+			p = q;
+		} else if (strncmp(q + 1, code_fence, strlen(code_fence)) == 0) {
+			p = q;
+		} else {
+			++q;
+		}
 	}
+
+	if (p - begin <= 1)
+		return 0;
 
 	fputs("<p>", stdout);
 	in_paragraph = 1;
 	process(begin, p, 0);
 	end_paragraph();
-
 	return -(p - begin);
 }
 
@@ -767,8 +772,6 @@ main(int argc, char *argv[]) {
 	int s, i;
 	unsigned long len, bsize;
 	FILE *source = stdin;
-
-	regcomp(&p_end_regex, "(\n\n|(^|\n)```)", REG_EXTENDED);
 
 	for (i = 1; i < argc; i++) {
 		if (!strcmp("-v", argv[i]))
