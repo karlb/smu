@@ -494,11 +494,11 @@ dotable(const char *begin, const char *end, int newblock) {
 	/* table state */
 	static signed char intable, inrow, incell;
 	static unsigned long int calign;
-	static const char align_table[4][16] = {
+	static const char align_table[4][27] = {
 		"",
-		" align=\"left\"",
-		" align=\"right\"",
-		" align=\"center\"",
+		" style=\"text-align: left\"",
+		" style=\"text-align: right\"",
+		" style=\"text-align: center\"",
 	};
 
 	const char *p;
