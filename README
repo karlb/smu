@@ -196,6 +196,30 @@ This has two advantages:
 * The optional language identifier will be turned into a `language-` class name
 * You can keep the original indentation which helps when doing copy & paste
 
+Tables
+------
+
+Tables can be generated with the following syntax:
+
+	| Heading1 | Heading2 |
+	| -------- | -------- |
+	| Cell 1   | Cell2    |
+
+Aligning the columns make the input nicer to read, but is not necessary to get
+correct table output. You could just write
+
+	| Heading1 | Heading2 |
+	| --- | --- |
+	| Cell 1 | Cell2 |
+
+To align the content of table cells, use `|:--|` for left, `|--:|` for right
+and `|:--:|` for centered alignment in the row which separates the header from
+the table body.
+
+	| Heading1 | Heading2 | Heading3 |
+	| :------- | :------: | -------: |
+	| Left     | Center   | Right    |
+
 Other interesting stuff
 -----------------------
 
