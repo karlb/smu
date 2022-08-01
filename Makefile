@@ -54,7 +54,7 @@ uninstall:
 	@rm -f ${DESTDIR}${MANPREFIX}/man1/smu.1
 
 test: $(patsubst %.text,%.html,$(wildcard tests/*.text tests/*/*.text)) 
-	git diff -- tests
+	git diff --exit-code -- tests
 
 docs: docs/index.html
 
