@@ -70,6 +70,8 @@ static Tag surround[] = {
 	{ "```",        0,      "<code>",       "</code>" },
 	{ "``",         0,      "<code>",       "</code>" },
 	{ "`",          0,      "<code>",       "</code>" },
+	{ "$$",         0,      "$$",           "$$" },
+	{ "$",          0,      "$",            "$" },
 	{ "___",        1,      "<strong><em>", "</em></strong>" },
 	{ "***",        1,      "<strong><em>", "</em></strong>" },
 	{ "__",         1,      "<strong>",     "</strong>" },
@@ -655,8 +657,13 @@ dosurround(const char *begin, const char *end, int newblock) {
 		} while (p && p[-1] == '\\');
 		if (p && p[-1] != '\\')
 			stop = p;
-		if (!stop || stop < start || stop >= end)
+		if (!stop || stop <= start || stop >= end)
 			continue;
+		if (stop[0] == '$' && l == 1) {
+			/* not inline math if span starts or ends with space or contains newline */
+			if (isspace(start[0]) || isspace(stop[-1]) || strchr(start, '\n') < stop)
+				continue;
+		}
 		fputs(surround[i].before, stdout);
 
 		/* Single space at start and end are ignored */

@@ -248,6 +248,8 @@ Other interesting stuff
   	But here is  
   	one.
 
+* Text wrapped in `$` or `$$` is not processed so it can be used with MathJax
+
 embed HTML
 ----------
 
