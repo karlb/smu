@@ -17,13 +17,16 @@ options:
 
 .c.o:
 	@echo CC $<
-	@${CC} -c ${CFLAGS} $<
+	@${CC} -c ${CPPFLAGS} ${CFLAGS} $<
 
 ${OBJ}: config.mk
 
 smu: ${OBJ}
 	@echo LD $@
 	@${CC} -o $@ ${OBJ} ${LDFLAGS}
+
+math: CPPFLAGS += -DDISPLAY_MATH_DELIMITER='$$$$' -DINLINE_MATH_DELIMITER='$$'
+math: options smu
 
 clean:
 	@echo cleaning

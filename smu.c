@@ -15,6 +15,11 @@
 #define LENGTH(x)  sizeof(x)/sizeof(x[0])
 #define ADDC(b,i)  if (i % BUFSIZ == 0) { b = realloc(b, (i + BUFSIZ) * sizeof(char)); if (!b) eprint("Malloc failed."); } b[i]
 
+#define QUOTE(x) #x
+#define EXPAND_AND_QUOTE(x) QUOTE(x)
+#define DISPLAY_MATH EXPAND_AND_QUOTE(DISPLAY_MATH_DELIMITER)
+#define INLINE_MATH EXPAND_AND_QUOTE(INLINE_MATH_DELIMITER)
+
 typedef int (*Parser)(const char *, const char *, int);
 typedef struct {
 	char *search;
@@ -70,8 +75,8 @@ static Tag surround[] = {
 	{ "```",        0,      "<code>",       "</code>" },
 	{ "``",         0,      "<code>",       "</code>" },
 	{ "`",          0,      "<code>",       "</code>" },
-	{ "$$",         0,      "$$",           "$$" },
-	{ "$",          0,      "$",            "$" },
+	{ DISPLAY_MATH, 0,      "\\[",          "\\]" },
+	{ INLINE_MATH,  0,      "\\(",          "\\)" },
 	{ "___",        1,      "<strong><em>", "</em></strong>" },
 	{ "***",        1,      "<strong><em>", "</em></strong>" },
 	{ "__",         1,      "<strong>",     "</strong>" },
@@ -647,7 +652,7 @@ dosurround(const char *begin, const char *end, int newblock) {
 
 	for (i = 0; i < LENGTH(surround); i++) {
 		l = strlen(surround[i].search);
-		if (end - begin < 2*l || strncmp(begin, surround[i].search, l) != 0)
+		if (l == 0 || end - begin < 2*l || strncmp(begin, surround[i].search, l) != 0)
 			continue;
 		start = begin + l;
 		p = start;
@@ -659,7 +664,7 @@ dosurround(const char *begin, const char *end, int newblock) {
 			stop = p;
 		if (!stop || stop <= start || stop >= end)
 			continue;
-		if (stop[0] == '$' && l == 1) {
+		if (strcmp(surround[i].search, INLINE_MATH) == 0) {
 			/* not inline math if span starts or ends with space or contains newline */
 			if (isspace(start[0]) || isspace(stop[-1]) || strchr(start, '\n') < stop)
 				continue;
