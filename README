@@ -255,6 +255,9 @@ Other interesting stuff
   	But here is  
   	one.
 
+* If built with `make math`, text wrapped in `$` or `$$` is not processed
+  so it can be used with MathJax
+
 embed HTML
 ----------
 
