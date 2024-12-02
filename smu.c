@@ -407,7 +407,7 @@ dolist(const char *begin, const char *end, int newblock) {
 	} else {
 		num_start = p;
 		for (; p < end && *p >= '0' && *p <= '9'; p++);
-		if (p >= end || *p != '.')
+		if (p >= end || ((*p != '.') && (*p != ')')))
 			return 0;
 		start_number = atoi(num_start);
 	}
@@ -455,7 +455,7 @@ dolist(const char *begin, const char *end, int newblock) {
 					for (; q + j != end && q[j] >= '0' && q[j] <= '9' && j < indent; j++);
 					if (q + j == end)
 						break;
-					if (j > 0 && q[j] == '.')
+					if (j > 0 && ((q[j] == '.') || (q[j] == ')')))
 						j++;
 					else
 						j = 0;
