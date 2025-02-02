@@ -653,8 +653,9 @@ dosurround(const char *begin, const char *end, int newblock) {
 			stop = p;
 			p = strstr(p + 1, surround[i].search);
 		} while (p && p[-1] == '\\');
-		if (p && p[-1] != '\\')
-			stop = p;
+		if (!p || p[-1] == '\\')  /* No unescaped closing marker found */
+			continue;
+		stop = p;
 		if (!stop || stop < start || stop >= end)
 			continue;
 		fputs(surround[i].before, stdout);
