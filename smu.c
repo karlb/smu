@@ -225,8 +225,8 @@ dohtml(const char *begin, const char *end, int newblock) {
 	}
 	p = strchr(tagend, '>');
 	if (p) {
-		fwrite(begin, sizeof(char), p - begin + 2, stdout);
-		return p - begin + 2;
+		fwrite(begin, sizeof(char), p - begin + 1, stdout);
+		return p - begin + 1;
 	}
 	else
 		return 0;

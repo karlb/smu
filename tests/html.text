@@ -8,3 +8,7 @@
 	<li>One
 	<li>Two
 </ul>
+
+Hello<br><br>world!
+
+Hello<br/><br />self closing tags!
