@@ -315,12 +315,20 @@ dolink(const char *begin, const char *end, int newblock) {
 		img = 1;
 	else
 		return 0;
-	p = desc = begin + 1 + img;
-	if (!(p = strstr(desc, "](")) || p > end)
+
+	/* Find the "](" pattern */
+	if (!(p = strstr(begin + 1 + img, "](")) || p > end)
 		return 0;
-	for (q = strstr(desc, "!["); q && q < end && q < p; q = strstr(q + 1, "!["))
-		if (!(p = strstr(p + 1, "](")) || p > end)
+
+	/* Check if this is the start of the actual link by looking for other [ before ]( */
+	for (q = begin + 1 + img; q < p; q++) {
+		if (*q == '[') {
+			/* Found another [ before ](, so this is not the start of the link */
 			return 0;
+		}
+	}
+
+	desc = begin + 1 + img;
 	descend = p;
 	link = p + 2;
 
