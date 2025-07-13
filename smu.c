@@ -316,17 +316,29 @@ dolink(const char *begin, const char *end, int newblock) {
 	else
 		return 0;
 
-	/* Find the "](" pattern */
-	if (!(p = strstr(begin + 1 + img, "](")) || p > end)
-		return 0;
-
-	/* Check if this is the start of the actual link by looking for other [ before ]( */
-	for (q = begin + 1 + img; q < p; q++) {
-		if (*q == '[') {
-			/* Found another [ before ](, so this is not the start of the link */
-			return 0;
+	/* Find the correct "](" pattern that closes this link */
+	p = begin + 1 + img;
+	int nested_brackets = 0;
+	while (p < end) {
+		if (*p == '[') {
+			nested_brackets++;
+		} else if (*p == ']') {
+			if (nested_brackets == 0) {
+				/* This ] potentially closes our link */
+				if (p + 1 < end && *(p + 1) == '(') {
+					/* Found our closing ]( */
+					break;
+				}
+			} else {
+				nested_brackets--;
+			}
 		}
+		p++;
 	}
+	if (p >= end || *p != ']' || p + 1 >= end || *(p + 1) != '(') {
+		return 0;
+	}
+
 
 	desc = begin + 1 + img;
 	descend = p;
