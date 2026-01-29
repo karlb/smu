@@ -115,8 +115,8 @@ static const char *replace[][2] = {
 	{ "\\|",        "|" },
 	{ "\\~",        "~" },
 	/* HTML syntax symbols that need to be turned into entities */
-	{ "<",          "&lt;" },
-	{ ">",          "&gt;" },
+	{ "<",          "<" },
+	{ ">",          ">" },
 	{ "&amp;",      "&amp;" },  /* Avoid replacing the & in &amp; */
 	{ "&",          "&amp;" },
 	/* Preserve newlines with two spaces before linebreak */
