@@ -1,3 +1,22 @@
+<h1>Status</h1>
+<p>Unmaintained, I use <a href="https://djot.net">Djot</a> with <a href="https://github.com/karlb/cdjot/">cdjot</a> instead.</p>
+<h2>Retrospective</h2>
+<p>I first picked up smu to fix some issues mentioned in the suckless wiki. When I
+could not get most of it merged (lack of feedback, no explicit rejection) I
+started maintaining my own fork, adding test cases and fixing a few more
+issues. But I also could not get the suckless wiki to switch to my fork,
+despite implementing the requested changes and testing against the wiki. So I
+kept using my own fork and fixing reported bugs. But without a clear spec, it
+was hard to weigh fixing certain use cases against keeping the code
+straightforward. Some cases are just ambiguous and the way CommonMark handles
+them is often inelegant and complicated. While smu was working fine, I didn't
+see a path to get it to a really good state or at least a mature, well-defined
+state.</p>
+<p>When I found <a href="https://djot.net">Djot</a>, it seemed to be in many ways what the
+smu markup language should have been from the beginning. It is less minimalist
+than smu, but that also helps to avoid too many diverging forks that need "just
+this one more feature". Overall, Djot's clarity makes things simpler for me
+than smu's more pronounced minimalism.</p>
 <h1>smu - a Simple Markup Language</h1>
 <p><em>smu</em> is a very simple and minimal markup language. It is designed for use in
 wiki-like environments. smu makes it very easy to write your documents on the
