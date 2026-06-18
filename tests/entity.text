@@ -1,0 +1,9 @@
+HTML entities: &middot; &nbsp; &copy; &euro;
+
+Numeric entities: &#361; &#169; &#8364;
+
+Hex entities: &#x169; &#xA9; &#x20AC;
+
+Mixed text with &middot; entity in the middle.
+
+Edge cases: &amp; &lt; &gt; &quot;

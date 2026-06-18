@@ -36,6 +36,7 @@ static int dosurround(const char *begin, const char *end, int newblock);  /* Par
 static int dounderline(const char *begin, const char *end, int newblock); /* Parser for underline tags */
 static void *ereallocz(void *p, size_t size);
 static void hprint(const char *begin, const char *end);                   /* escapes HTML and prints it to output */
+static int is_entity(const char *p, const char *end);                     /* checks if string is a valid HTML entity */
 static void process(const char *begin, const char *end, int isblock);     /* Processes range between begin and end. */
 
 /* list of parsers */
@@ -585,6 +586,9 @@ doreplace(const char *begin, const char *end, int newblock) {
 		if (end - begin < l)
 			continue;
 		if (strncmp(replace[i][0], begin, l) == 0) {
+			/* Don't replace & if it's part of an HTML entity */
+			if (replace[i][0][0] == '&' && l == 1 && is_entity(begin, end) > 0)
+				continue;
 			fputs(replace[i][1], stdout);
 			return l;
 		}
@@ -713,12 +717,79 @@ ereallocz(void *p, size_t size) {
 	return res;
 }
 
+/* Check if string starting at p is a valid HTML entity
+ * Returns length of entity if valid, 0 otherwise */
+int
+is_entity(const char *p, const char *end) {
+	const char *start = p;
+
+	if (p >= end || *p != '&')
+		return 0;
+
+	p++;
+	if (p >= end)
+		return 0;
+
+	/* Numeric entity: &#123; or &#xAF; */
+	if (*p == '#') {
+		int digits = 0;
+		p++;
+		if (p >= end)
+			return 0;
+
+		/* Hexadecimal */
+		if (*p == 'x' || *p == 'X') {
+			p++;
+			while (p < end && digits < 6 &&
+			       ((*p >= '0' && *p <= '9') ||
+			        (*p >= 'a' && *p <= 'f') ||
+			        (*p >= 'A' && *p <= 'F'))) {
+				p++;
+				digits++;
+			}
+		}
+		/* Decimal */
+		else {
+			while (p < end && digits < 7 && *p >= '0' && *p <= '9') {
+				p++;
+				digits++;
+			}
+		}
+
+		if (digits >= 1 && p < end && *p == ';')
+			return p - start + 1;
+		return 0;
+	}
+
+	/* Named entity: &name; */
+	else {
+		int chars = 0;
+		while (p < end && chars < 32 &&
+		       ((*p >= 'a' && *p <= 'z') ||
+		        (*p >= 'A' && *p <= 'Z') ||
+		        (*p >= '0' && *p <= '9'))) {
+			p++;
+			chars++;
+		}
+
+		if (chars >= 1 && p < end && *p == ';')
+			return p - start + 1;
+		return 0;
+	}
+}
+
 void
 hprint(const char *begin, const char *end) {
 	const char *p;
+	int entity_len;
 
 	for (p = begin; p != end; p++) {
-		if (*p == '&')
+		if (*p == '&' && (entity_len = is_entity(p, end)) > 0) {
+			/* Valid HTML entity - output as-is */
+			fwrite(p, sizeof(char), entity_len, stdout);
+			p += entity_len - 1;  /* -1 because loop will increment */
+		}
+		else if (*p == '&')
 			fputs("&amp;", stdout);
 		else if (*p == '"')
 			fputs("&quot;", stdout);
