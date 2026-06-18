@@ -315,12 +315,32 @@ dolink(const char *begin, const char *end, int newblock) {
 		img = 1;
 	else
 		return 0;
-	p = desc = begin + 1 + img;
-	if (!(p = strstr(desc, "](")) || p > end)
+
+	/* Find the correct "](" pattern that closes this link */
+	p = begin + 1 + img;
+	int nested_brackets = 0;
+	while (p < end) {
+		if (*p == '[') {
+			nested_brackets++;
+		} else if (*p == ']') {
+			if (nested_brackets == 0) {
+				/* This ] potentially closes our link */
+				if (p + 1 < end && *(p + 1) == '(') {
+					/* Found our closing ]( */
+					break;
+				}
+			} else {
+				nested_brackets--;
+			}
+		}
+		p++;
+	}
+	if (p >= end || *p != ']' || p + 1 >= end || *(p + 1) != '(') {
 		return 0;
-	for (q = strstr(desc, "!["); q && q < end && q < p; q = strstr(q + 1, "!["))
-		if (!(p = strstr(p + 1, "](")) || p > end)
-			return 0;
+	}
+
+
+	desc = begin + 1 + img;
 	descend = p;
 	link = p + 2;
 

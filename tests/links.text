@@ -1,0 +1,5 @@
+[foo][bar](baz)
+
+[Click here: ![icon](icon.png) for details](page.html)
+
+[text with [balanced] brackets](url)
